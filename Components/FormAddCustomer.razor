@@ -1,0 +1,82 @@
+﻿@using Models.Front
+
+<RadzenTemplateForm TItem="AddCustomer" Data="addCustomer" Submit="@(()=>AddCustomer())">
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn>
+            <RadzenLabel Text="รหัสผลิตภัณท์"></RadzenLabel>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenTextBox @bind-Value="addCustomer.Licensecode" />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn>
+            <RadzenLabel Text="รหัสร้านค้า"></RadzenLabel>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenTextBox @bind-Value="addCustomer.ShopCode" />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn>
+            <RadzenLabel Text="ชื่อร้าน"></RadzenLabel>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenTextBox @bind-Value="addCustomer.ShopName" />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn>
+            <RadzenLabel Text="ชื่อลูกค้า"></RadzenLabel>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenTextBox @bind-Value="addCustomer.CustomerName" />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn>
+            <RadzenLabel Text="ที่อยู่"></RadzenLabel>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenTextBox @bind-Value="addCustomer.Address" />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn>
+            <RadzenLabel Text="จังหวัด"></RadzenLabel>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenDropDown @bind-Value="addCustomer.Province" />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn>
+            <RadzenLabel Text="อำเภอ"></RadzenLabel>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenDropDown @bind-Value="addCustomer.District" />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn>
+            <RadzenLabel Text="ตำบล"></RadzenLabel>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenDropDown @bind-Value="addCustomer.SubDistrict" />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn>
+            <RadzenLabel Text="รหัสไปรษณีย์"></RadzenLabel>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenTextBox @bind-Value="addCustomer.PostalCode" />
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenTemplateForm>
+
+@code {
+    private AddCustomer addCustomer = new();
+
+    private void AddCustomer() { }
+}

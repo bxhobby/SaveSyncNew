@@ -1,0 +1,14 @@
+﻿@page "/cutomer"
+
+@inject DialogService DialogService
+
+@using Models.Front
+
+<RadzenButton Text="เพิ่มลูกค้า" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Success" Click="@(()=>OpenAddCustomer())" />
+
+@code {
+    public async Task OpenAddCustomer()
+    {
+        await DialogService.OpenAsync("เพิ่มข้อมูลลูกค้า",ds =>@<SaveSyncNew.Components.FormAddCustomer></SaveSyncNew.Components.FormAddCustomer>);
+    }
+}

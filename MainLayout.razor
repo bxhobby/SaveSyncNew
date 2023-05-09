@@ -1,3 +1,33 @@
 ﻿@inherits LayoutComponentBase
 
-<main> @Body </main>
+<RadzenDialog />
+
+<RadzenLayout>
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+            <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
+            <RadzenLabel Text="โปรแกรมบันทึกข้อมูลลูกค้า Sync New" />
+        </RadzenStack>
+    </RadzenHeader>
+    <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="หน้าแรก" Icon="home" Path="/" />
+            <RadzenPanelMenuItem Text="ลูกค้า" Icon="account_box" Path="/cutomer"/>
+        </RadzenPanelMenu>
+        <div class="rz-p-4">
+            Sidebar
+        </div>
+    </RadzenSidebar>
+    <RadzenBody>
+        <div class="rz-p-4">
+            @Body
+        </div>
+    </RadzenBody>
+    <RadzenFooter>
+        Footer
+    </RadzenFooter>
+</RadzenLayout>
+
+@code {
+    bool sidebar1Expanded = true;
+}

@@ -1,3 +1,8 @@
+@font-face {
+    font-family: IBMPlexSansThaiLooped-Medium;
+    src: url(/fonts/IBM_Plex_Sans_Thai_Looped/IBMPlexSansThaiLooped-Medium.ttf);
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
@@ -26,3 +31,8 @@
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+html, body {
+    height:100%;
+    font-family: IBMPlexSansThaiLooped-Medium;
+}
