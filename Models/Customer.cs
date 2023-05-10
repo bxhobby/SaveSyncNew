@@ -1,6 +1,6 @@
-﻿namespace SaveSyncNew.Models.Front
+﻿namespace SaveSyncNew.Models
 {
-    public class AddCustomer
+    public class Customer
     {
         public string? Licensecode { get; set; }
         public string? ShopCode { get; set; }

@@ -1,12 +1,15 @@
-﻿@using Models.Front
+﻿@using Models
+@using Services
 
-<RadzenTemplateForm TItem="AddCustomer" Data="addCustomer" Submit="@(()=>AddCustomer())">
+@inject ThaiData ThaiDataService
+
+<RadzenTemplateForm TItem="Customer" Data="Customer">
     <RadzenRow class="rz-mb-2">
         <RadzenColumn>
             <RadzenLabel Text="รหัสผลิตภัณท์"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="addCustomer.Licensecode" />
+            <RadzenTextBox @bind-Value="Customer.Licensecode" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -14,7 +17,7 @@
             <RadzenLabel Text="รหัสร้านค้า"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="addCustomer.ShopCode" />
+            <RadzenTextBox @bind-Value="Customer.ShopCode" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -22,7 +25,7 @@
             <RadzenLabel Text="ชื่อร้าน"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="addCustomer.ShopName" />
+            <RadzenTextBox @bind-Value="Customer.ShopName" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -30,7 +33,7 @@
             <RadzenLabel Text="ชื่อลูกค้า"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="addCustomer.CustomerName" />
+            <RadzenTextBox @bind-Value="Customer.CustomerName" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -38,7 +41,7 @@
             <RadzenLabel Text="ที่อยู่"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="addCustomer.Address" />
+            <RadzenTextBox @bind-Value="Customer.Address" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -46,7 +49,7 @@
             <RadzenLabel Text="จังหวัด"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenDropDown @bind-Value="addCustomer.Province" />
+            <RadzenDropDown @bind-Value="Customer.Province" Data="ListProvince" Change="ProvinceOnChange" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -54,7 +57,7 @@
             <RadzenLabel Text="อำเภอ"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenDropDown @bind-Value="addCustomer.District" />
+            <RadzenDropDown @bind-Value="Customer.District" Data="ListDistrict.Select(a => a.districtNameTh).ToList()" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -62,7 +65,7 @@
             <RadzenLabel Text="ตำบล"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenDropDown @bind-Value="addCustomer.SubDistrict" />
+            <RadzenDropDown @bind-Value="Customer.SubDistrict" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -70,13 +73,29 @@
             <RadzenLabel Text="รหัสไปรษณีย์"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="addCustomer.PostalCode" />
+            <RadzenTextBox @bind-Value="Customer.PostalCode" />
         </RadzenColumn>
     </RadzenRow>
 </RadzenTemplateForm>
 
 @code {
-    private AddCustomer addCustomer = new();
+    private Customer Customer = new();
+    private List<string> ListProvince = new();
+    private List<District> ListDistrict = new();
 
-    private void AddCustomer() { }
+
+    private void ProvinceOnChange(Object SelectProvinceName)
+    {
+        string? Name = SelectProvinceName.ToString();
+        Province? ProvinceData = ListProvince.FirstOrDefault(a => a.provinceNameTh == Name);
+        if (ProvinceData is not null)
+        {
+            ListDistrict = ThaiDataService.LoadDistrict(ProvinceData.provinceCode);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        ListProvince = ThaiDataService.LoadProvince();
+    }
 }

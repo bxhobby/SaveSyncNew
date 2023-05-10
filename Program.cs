@@ -1,9 +1,11 @@
 using Radzen;
+using SaveSyncNew.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<DialogService>();
+builder.Services.AddScoped<ThaiData>();
 
 var app = builder.Build();
 
