@@ -50,10 +50,7 @@ namespace SaveSyncNew.Services
                 }
                 return ListProvince;
             }
-            else
-            {
-                return null;
-            }
+            else { return null; }
         }
 
         public List<string>? LoadDistrict(string ProvincName)
@@ -81,20 +78,11 @@ namespace SaveSyncNew.Services
                         }
                         return ListDistrict;
                     }
-                    else
-                    {
-                        return null;
-                    }
+                    else { return null; }
                 }
-                else
-                {
-                    return null;
-                }
+                else { return null; }
             }
-            else
-            {
-                return null;
-            }
+            else { return null; }
         }
 
         public List<string>? LoadSubDistrict(string SelectDistrictName)
@@ -122,20 +110,35 @@ namespace SaveSyncNew.Services
                         }
                         return ListSubDistrict;
                     }
-                    else
-                    {
-                        return null;
-                    }
+                    else { return null; }
                 }
-                else
-                {
-                    return null;
-                }
+                else { return null; }
             }
-            else
+            else { return null; }
+        }
+        public int? LoadPostalCode(string SelectSubDistrictName, string SelectDistrictName)
+        {
+            List<SubDistrict>? SubDistrictData = LoadSubDistrictData();
+            List<District>? DistrictData = LoadDistrictData();
+
+            if (SubDistrictData is not null && DistrictData is not null)
             {
-                return null;
+                District? SearchDistrict = DistrictData.FirstOrDefault(x => x.districtNameTh == SelectDistrictName);
+                if (SearchDistrict is not null)
+                {
+                    SubDistrict? SearchSubDistrict = SubDistrictData.FirstOrDefault
+                    (
+                        x => x.SubdistrictNameTh == SelectSubDistrictName && x.DistrictCode == SearchDistrict.districtCode
+                    );
+                    if (SearchSubDistrict is not null)
+                    {
+                        return SearchSubDistrict.PostalCode;
+                    }
+                    else { return null; }
+                }
+                else { return null; }
             }
+            else { return null; }
         }
     }
 }

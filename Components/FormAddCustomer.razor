@@ -65,7 +65,7 @@
             <RadzenLabel Text="ตำบล"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenDropDown @bind-Value="Customer.SubDistrict" Data="ListSubDistrict"/>
+            <RadzenDropDown @bind-Value="Customer.SubDistrict" Data="ListSubDistrict" Change="SubDistrictOnChange" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -73,7 +73,7 @@
             <RadzenLabel Text="รหัสไปรษณีย์"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="Customer.PostalCode" />
+            <RadzenNumeric ShowUpDown="false" TValue="int?" @bind-Value="Customer.PostalCode"/>
         </RadzenColumn>
     </RadzenRow>
 </RadzenTemplateForm>
@@ -88,6 +88,7 @@
     {
         Customer.District = "";
         Customer.SubDistrict = "";
+        Customer.PostalCode = null;
         string? Name = SelectProvinceName.ToString();
         if (Name is not null)
         {
@@ -98,10 +99,20 @@
     private void DistrictOnChange(Object SelectDistrictName)
     {
         Customer.SubDistrict = "";
+        Customer.PostalCode = null;
         string? Name = SelectDistrictName.ToString();
         if (Name is not null)
         {
             ListSubDistrict = ThaiDataService.LoadSubDistrict(Name);
+        }
+    }
+
+    private void SubDistrictOnChange(Object SelectSubDistrictName)
+    {
+        string? Name = SelectSubDistrictName.ToString();
+        if (Name is not null && Customer.District is not null)
+        {
+            Customer.PostalCode = ThaiDataService.LoadPostalCode(Name,Customer.District);
         }
     }
 
