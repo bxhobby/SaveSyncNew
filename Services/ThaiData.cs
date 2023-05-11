@@ -6,59 +6,136 @@ namespace SaveSyncNew.Services
     public class ThaiData
     {
         private readonly string PathThaiData = Directory.GetCurrentDirectory() + @"\Data\thailand-geography-json-main\";
-        public List<string> LoadProvince()
-        {
-            List<string> ListProvince = new();
 
+        private List<Province>? LoadProvinceData()
+        {
             StreamReader Reader = new(PathThaiData + @"provinces.json");
             string Json = Reader.ReadToEnd();
-            List<Province>? FormJson = JsonSerializer.Deserialize<List<Province>>(Json);
+            List<Province>? ListProvince = JsonSerializer.Deserialize<List<Province>>(Json);
 
-            if (FormJson is not null)
-            {
-                foreach (Province Province in FormJson)
-                {
-                    if (Province.provinceNameTh is not null)
-                    {
-                        ListProvince.Add(Province.provinceNameTh);
-                    }
-                }
-            }
             return ListProvince;
         }
 
-        public List<string> LoadDistrict(string ProvincName)
+        private List<District>? LoadDistrictData()
         {
-            List<string> ListDistrict = new();
-            Province? ProviceData;
-
-            StreamReader Reader = new(PathThaiData + @"provinces.json");
-            string JsonProvince = Reader.ReadToEnd();
-            List<Province>? ListProvince = JsonSerializer.Deserialize<List<Province>>(JsonProvince);
-            if (ListProvince is not null)
-            {
-                ProviceData = ListProvince.FirstOrDefault(a => a.provinceNameTh == ProvincName);
-            }
-
             StreamReader ReaderDistrict = new(PathThaiData + @"districts.json");
-            string JsonDistrict = ReaderDistrict.ReadToEnd();
-            List<District>? FormJson = JsonSerializer.Deserialize<List<District>>(JsonDistrict);
+            string Json = ReaderDistrict.ReadToEnd();
+            List<District>? ListDistrict = JsonSerializer.Deserialize<List<District>>(Json);
 
-            if(ProviceData is  null)
+            return ListDistrict;
+        }
+
+        private List<SubDistrict>? LoadSubDistrictData()
+        {
+            StreamReader ReaderDistrict = new(PathThaiData + @"subdistricts.json");
+            string Json = ReaderDistrict.ReadToEnd();
+            List<SubDistrict>? ListSubDistrict = JsonSerializer.Deserialize<List<SubDistrict>>(Json);
+
+            return ListSubDistrict;
+        }
+
+        public List<string>? LoadProvince()
+        {
+            List<Province>? ProvinceData = LoadProvinceData();
+
+            if (ProvinceData is not null)
             {
-                if (FormJson is not null)
+                List<string> ListProvince = new();
+                foreach (Province Province in ProvinceData)
                 {
-                    foreach (District District in FormJson)
+                    if (Province.ProvinceNameTh is not null)
                     {
-                        if (District.provinceCode == ProviceData.provinceCode)
-                        {
-                            ListDistrict.Add(District.districtNameTh);
-                        }
+                        ListProvince.Add(Province.ProvinceNameTh);
                     }
                 }
+                return ListProvince;
             }
-            
-            return ListDistrict;
+            else
+            {
+                return null;
+            }
+        }
+
+        public List<string>? LoadDistrict(string ProvincName)
+        {
+            List<Province>? ProvinceData = LoadProvinceData();
+            if (ProvinceData is not null)
+            {
+                Province? SearchProvince = ProvinceData.FirstOrDefault(p => p.ProvinceNameTh == ProvincName);
+                if (SearchProvince is not null)
+                {
+                    int ProvinceCode = SearchProvince.ProvinceCode;
+                    List<District>? DistrictData = LoadDistrictData();
+
+                    if (DistrictData is not null)
+                    {
+                        List<string> ListDistrict = new();
+                        List<District> SearchListDistrict = DistrictData.Where(x => x.provinceCode == SearchProvince.ProvinceCode).ToList();
+
+                        foreach (District District in SearchListDistrict)
+                        {
+                            if (District.districtNameTh is not null)
+                            {
+                                ListDistrict.Add(District.districtNameTh);
+                            }
+                        }
+                        return ListDistrict;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public List<string>? LoadSubDistrict(string SelectDistrictName)
+        {
+            List<District>? DistrictData = LoadDistrictData();
+            if (DistrictData is not null)
+            {
+                District? SearchDistrict = DistrictData.FirstOrDefault(x => x.districtNameTh == SelectDistrictName);
+                if (SearchDistrict is not null)
+                {
+                    int DistrictCode = SearchDistrict.districtCode;
+                    List<SubDistrict>? SubDistrictData = LoadSubDistrictData();
+
+                    if (SubDistrictData is not null)
+                    {
+                        List<string> ListSubDistrict = new();
+                        List<SubDistrict> SearchListSubDistrict = SubDistrictData.Where(x => x.DistrictCode == SearchDistrict.districtCode).ToList();
+
+                        foreach (SubDistrict SubDistrict in SearchListSubDistrict)
+                        {
+                            if (SubDistrict.SubdistrictNameTh is not null)
+                            {
+                                ListSubDistrict.Add(SubDistrict.SubdistrictNameTh);
+                            }
+                        }
+                        return ListSubDistrict;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

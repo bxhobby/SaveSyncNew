@@ -57,7 +57,7 @@
             <RadzenLabel Text="อำเภอ"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenDropDown @bind-Value="Customer.District" Data="ListDistrict.Select(a => a.districtNameTh).ToList()" />
+            <RadzenDropDown @bind-Value="Customer.District" Data="ListDistrict" Change="DistrictOnChange" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -65,7 +65,7 @@
             <RadzenLabel Text="ตำบล"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenDropDown @bind-Value="Customer.SubDistrict" />
+            <RadzenDropDown @bind-Value="Customer.SubDistrict" Data="ListSubDistrict"/>
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -80,17 +80,28 @@
 
 @code {
     private Customer Customer = new();
-    private List<string> ListProvince = new();
-    private List<District> ListDistrict = new();
-
+    private List<string>? ListProvince;
+    private List<string>? ListDistrict;
+    private List<string>? ListSubDistrict;
 
     private void ProvinceOnChange(Object SelectProvinceName)
     {
+        Customer.District = "";
+        Customer.SubDistrict = "";
         string? Name = SelectProvinceName.ToString();
-        Province? ProvinceData = ListProvince.FirstOrDefault(a => a.provinceNameTh == Name);
-        if (ProvinceData is not null)
+        if (Name is not null)
         {
-            ListDistrict = ThaiDataService.LoadDistrict(ProvinceData.provinceCode);
+            ListDistrict = ThaiDataService.LoadDistrict(Name);
+        }
+    }
+
+    private void DistrictOnChange(Object SelectDistrictName)
+    {
+        Customer.SubDistrict = "";
+        string? Name = SelectDistrictName.ToString();
+        if (Name is not null)
+        {
+            ListSubDistrict = ThaiDataService.LoadSubDistrict(Name);
         }
     }
 

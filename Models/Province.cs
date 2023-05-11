@@ -1,10 +1,19 @@
-﻿namespace SaveSyncNew.Models
+﻿using System.Text.Json.Serialization;
+
+namespace SaveSyncNew.Models
 {
     public class Province
     {
-        public int id { get; set; }
-        public int provinceCode { get; set; }
-        public string? provinceNameEn { get; set; }
-        public string? provinceNameTh { get; set; }
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+
+        [JsonPropertyName("provinceCode")]
+        public int ProvinceCode { get; set; }
+
+        [JsonPropertyName("provinceNameEn")]
+        public string? ProvinceNameEn { get; set; }
+
+        [JsonPropertyName("provinceNameTh")]
+        public string? ProvinceNameTh { get; set; }
     }
 }
