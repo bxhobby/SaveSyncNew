@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace SaveSyncNew.Services
 {
-    public class ThaiData
+    public class ThaiDataService
     {
         private readonly string PathThaiData = Directory.GetCurrentDirectory() + @"\Data\thailand-geography-json-main\";
 

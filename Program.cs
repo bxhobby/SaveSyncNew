@@ -1,11 +1,14 @@
+using Microsoft.EntityFrameworkCore;
 using Radzen;
+using SaveSyncNew.Data;
 using SaveSyncNew.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<DialogService>();
-builder.Services.AddScoped<ThaiData>();
+builder.Services.AddScoped<ThaiDataService>();
+builder.Services.AddDbContext<CustomerContext>(Option => Option.UseSqlServer(@"Data Source=.\SQLEXPRESS;Initial Catalog=CwCustomer;Trusted_Connection=True;MultipleActiveResultSets=true;Encrypt=true;TrustServerCertificate=true;"));
 
 var app = builder.Build();
 

@@ -1,15 +1,17 @@
 ﻿@using Models
 @using Services
 
-@inject ThaiData ThaiDataService
+@inject ThaiDataService ThaiDataService
+@inject DialogService DialogService
 
-<RadzenTemplateForm TItem="Customer" Data="Customer">
+<RadzenTemplateForm TItem="Customer" Data="Customer" Submit="@(()=>OnSave())">
     <RadzenRow class="rz-mb-2">
         <RadzenColumn>
             <RadzenLabel Text="รหัสผลิตภัณท์"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="Customer.Licensecode" />
+            <RadzenTextBox @bind-Value="Customer.LicenseCode" Name="LicenseCode" Style="height: 1.5rem;" MaxLength="4"/>
+            <RadzenRequiredValidator Component="LicenseCode" Text="ต้องใส่ข้อมูล"></RadzenRequiredValidator>
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -17,7 +19,8 @@
             <RadzenLabel Text="รหัสร้านค้า"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="Customer.ShopCode" />
+            <RadzenTextBox @bind-Value="Customer.ShopCode" Style="height: 1.5rem;" Name="ShopCode" />
+            <RadzenRequiredValidator Component="ShopCode" Text="ต้องใส่ข้อมูล"></RadzenRequiredValidator>
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -25,7 +28,8 @@
             <RadzenLabel Text="ชื่อร้าน"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="Customer.ShopName" />
+            <RadzenTextBox @bind-Value="Customer.ShopName" Style="height: 1.5rem;" Name="ShopName" />
+            <RadzenRequiredValidator Component="ShopName" Text="ต้องใส่ข้อมูล"></RadzenRequiredValidator>
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -33,7 +37,8 @@
             <RadzenLabel Text="ชื่อลูกค้า"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="Customer.CustomerName" />
+            <RadzenTextBox @bind-Value="Customer.CustomerName" Style="height: 1.5rem;" Name="CustomerName" />
+            <RadzenRequiredValidator Component="CustomerName" Text="ต้องใส่ข้อมูล"></RadzenRequiredValidator>
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -41,7 +46,8 @@
             <RadzenLabel Text="ที่อยู่"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="Customer.Address" />
+            <RadzenTextBox @bind-Value="Customer.Address" Style="height: 1.5rem;" Name="Address" />
+            <RadzenRequiredValidator Component="Address" Text="ต้องใส่ข้อมูล"></RadzenRequiredValidator>
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -73,10 +79,28 @@
             <RadzenLabel Text="รหัสไปรษณีย์"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenNumeric ShowUpDown="false" TValue="int?" @bind-Value="Customer.PostalCode"/>
+            <RadzenNumeric ShowUpDown="false" TValue="int?" @bind-Value="Customer.PostalCode" ReadOnly="true"
+                Style="padding: 0%;" />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow class="rz-mb-2 rz-mt-6" JustifyContent="JustifyContent.Center">
+        <RadzenColumn Size="2">
+            <RadzenButton Text="บันทึก" ButtonStyle="ButtonStyle.Success" ButtonType="ButtonType.Submit"></RadzenButton>
+        </RadzenColumn>
+        <RadzenColumn Size="2">
+            <RadzenButton Text="ยกเลิก" ButtonStyle="ButtonStyle.Danger" Click="@(()=>DialogService.Close())">
+            </RadzenButton>
         </RadzenColumn>
     </RadzenRow>
 </RadzenTemplateForm>
+
+<style>
+    .rz-spinner input[type='number'],
+    .rz-spinner input[type='text'] {
+        padding-top: 0.1rem;
+        padding-left: 1rem;
+    }
+</style>
 
 @code {
     private Customer Customer = new();
@@ -84,36 +108,44 @@
     private List<string>? ListDistrict;
     private List<string>? ListSubDistrict;
 
-    private void ProvinceOnChange(Object SelectProvinceName)
+    private void ProvinceOnChange()
     {
         Customer.District = "";
         Customer.SubDistrict = "";
         Customer.PostalCode = null;
-        string? Name = SelectProvinceName.ToString();
-        if (Name is not null)
+
+        if (ListSubDistrict is not null)
         {
-            ListDistrict = ThaiDataService.LoadDistrict(Name);
+            ListSubDistrict.Clear(); //
+        }
+
+        if (Customer.Province is not null)
+        {
+            ListDistrict = ThaiDataService.LoadDistrict(Customer.Province);
         }
     }
 
-    private void DistrictOnChange(Object SelectDistrictName)
+    private void DistrictOnChange()
     {
         Customer.SubDistrict = "";
         Customer.PostalCode = null;
-        string? Name = SelectDistrictName.ToString();
-        if (Name is not null)
+        if (Customer.District is not null)
         {
-            ListSubDistrict = ThaiDataService.LoadSubDistrict(Name);
+            ListSubDistrict = ThaiDataService.LoadSubDistrict(Customer.District);
         }
     }
 
-    private void SubDistrictOnChange(Object SelectSubDistrictName)
+    private void SubDistrictOnChange()
     {
-        string? Name = SelectSubDistrictName.ToString();
-        if (Name is not null && Customer.District is not null)
+        if (Customer.SubDistrict is not null && Customer.District is not null)
         {
-            Customer.PostalCode = ThaiDataService.LoadPostalCode(Name,Customer.District);
+            Customer.PostalCode = ThaiDataService.LoadPostalCode(Customer.SubDistrict, Customer.District);
         }
+    }
+
+    private void OnSave()
+    {
+
     }
 
     protected override void OnInitialized()
