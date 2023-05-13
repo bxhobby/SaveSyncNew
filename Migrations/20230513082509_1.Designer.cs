@@ -11,9 +11,9 @@ using SaveSyncNew.Data;
 
 namespace SaveSyncNew.Migrations
 {
-    [DbContext(typeof(CustomerContext))]
-    [Migration("20230512095606_FixTypeColumn")]
-    partial class FixTypeColumn
+    [DbContext(typeof(DataContext))]
+    [Migration("20230513082509_1")]
+    partial class _1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,37 +34,37 @@ namespace SaveSyncNew.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"));
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("CustomerName")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("District")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("LicenseCode")
                         .HasColumnType("nchar(4)");
 
                     b.Property<string>("Phone")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int?>("PostalCode")
                         .HasColumnType("int");
 
                     b.Property<string>("Province")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("RegisterDate")
                         .HasColumnType("datetime");
 
                     b.Property<string>("ShopCode")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ShopName")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("SubDistrict")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("CustomerId");
 

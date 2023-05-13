@@ -3,13 +3,13 @@ using SaveSyncNew.Models;
 
 namespace SaveSyncNew.Data
 {
-    public class CustomerContext : DbContext
+    public class DataContext : DbContext
     {
-        public CustomerContext(DbContextOptions<CustomerContext> options) : base(options)
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
 
-        public DbSet<Customer>? Customer { get; set; }
+        public DbSet<Customer> Customer { get; set; }
     }
 }

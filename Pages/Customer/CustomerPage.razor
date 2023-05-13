@@ -1,0 +1,26 @@
+﻿@page "/customer"
+
+@using Models
+@inject DialogService DialogService
+
+<RadzenButton Text="เพิ่มลูกค้า" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Success" Click="OpenAddCustomer" />
+
+<RadzenDataGrid Data="ListCustomer">
+    <RadzenDataGridColumn Property="CustomerName" TItem="Customer"></RadzenDataGridColumn>
+</RadzenDataGrid>
+
+
+
+@code {
+    private List<Customer>? ListCustomer;
+    public async Task OpenAddCustomer()
+    {
+        await DialogService.OpenAsync("เพิ่มข้อมูลลูกค้า", ds =>@<SaveSyncNew.Components.FormAddCustomer>
+    </SaveSyncNew.Components.FormAddCustomer>);
+    }
+
+    @* protected override void OnInitialized()
+    {
+        ListProvince = ThaiDataService.LoadProvince();
+    } *@
+}

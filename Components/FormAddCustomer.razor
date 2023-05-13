@@ -3,14 +3,16 @@
 
 @inject ThaiDataService ThaiDataService
 @inject DialogService DialogService
+@inject CustomerService CustomerService
 
-<RadzenTemplateForm TItem="Customer" Data="Customer" Submit="@(()=>OnSave())">
+<RadzenTemplateForm TItem="Customer" Data="Customer" Submit="OnSave">
     <RadzenRow class="rz-mb-2">
         <RadzenColumn>
             <RadzenLabel Text="รหัสผลิตภัณท์"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="Customer.LicenseCode" Name="LicenseCode" Style="height: 1.5rem;" MaxLength="4"/>
+            <RadzenTextBox @bind-Value="Customer.LicenseCode" Name="LicenseCode" Style="height: 1.5rem;"
+                MaxLength="4" />
             <RadzenRequiredValidator Component="LicenseCode" Text="ต้องใส่ข้อมูล"></RadzenRequiredValidator>
         </RadzenColumn>
     </RadzenRow>
@@ -107,6 +109,7 @@
     private List<string>? ListProvince;
     private List<string>? ListDistrict;
     private List<string>? ListSubDistrict;
+    private string? Message;
 
     private void ProvinceOnChange()
     {
@@ -116,7 +119,7 @@
 
         if (ListSubDistrict is not null)
         {
-            ListSubDistrict.Clear(); //
+            ListSubDistrict.Clear();
         }
 
         if (Customer.Province is not null)
@@ -145,7 +148,12 @@
 
     private void OnSave()
     {
-
+        Message = CustomerService.AddCustomer(Customer);
+        if (Message != "Success")
+        {
+            DialogService.Close();
+            DialogService.Open("พบข้อผิดพลาด", ds => @<ErrorDialog Message="@Message"></ErrorDialog>);
+        }
     }
 
     protected override void OnInitialized()
