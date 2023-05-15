@@ -4,6 +4,7 @@
 @inject ThaiDataService ThaiDataService
 @inject DialogService DialogService
 @inject CustomerService CustomerService
+@inject NotificationService NotificationService
 
 <RadzenTemplateForm TItem="Customer" Data="Customer" Submit="OnSave">
     <RadzenRow class="rz-mb-2">
@@ -13,7 +14,9 @@
         <RadzenColumn>
             <RadzenTextBox @bind-Value="Customer.LicenseCode" Name="LicenseCode" Style="height: 1.5rem;"
                 MaxLength="4" />
-            <RadzenRequiredValidator Component="LicenseCode" Text="ต้องใส่ข้อมูล"></RadzenRequiredValidator>
+            @* <RadzenRequiredValidator Component="LicenseCode" Text="ต้องใส่ข้อมูล"></RadzenRequiredValidator> *@
+            <RadzenLengthValidator Component="LicenseCode" Min="4" Text="ต้องใส่ให้ครบ 4 ตัวอักษร" Popup="true"
+                Style="margin-bottom: 1rem; position: relative;" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -148,12 +151,32 @@
 
     private void OnSave()
     {
-        Message = CustomerService.AddCustomer(Customer);
-        if (Message != "Success")
-        {
-            DialogService.Close();
-            DialogService.Open("พบข้อผิดพลาด", ds => @<ErrorDialog Message="@Message"></ErrorDialog>);
-        }
+        DialogService.Close();
+        Console.WriteLine("Save Data");
+        DialogService.Open("กำลังบันทึกข้อมูล", ds => @<ProgressBar></ProgressBar>);
+        Task.Run(() =>
+            {
+    Message = CustomerService.AddCustomer(Customer);
+    Console.WriteLine("open Progress");
+    DialogService.Close();
+    if (Message == "Success")
+    {
+        NotificationService.Notify(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "",
+                        Detail = "บันทึกข้อมูลสำเร็จ",
+                        Duration = 4000
+                    });
+        DialogService.Close();
+    }
+    else
+    {
+        DialogService.Close();
+        Console.WriteLine("open Error");
+        DialogService.Open("พบข้อผิดพลาด", ds => @<ErrorDialog Message="@Message"></ErrorDialog>);
+    }
+});
     }
 
     protected override void OnInitialized()

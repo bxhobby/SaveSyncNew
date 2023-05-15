@@ -16,7 +16,7 @@ namespace SaveSyncNew.Services
             try
             {
                 Customer.RegisterDate = DateTime.Now;
-                DataContext.Customer.Add(Customer);
+                DataContext.Customer!.Add(Customer);
                 var a = DataContext.SaveChanges();
                 return "Success";
             }

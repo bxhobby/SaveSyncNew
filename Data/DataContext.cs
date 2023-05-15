@@ -10,6 +10,6 @@ namespace SaveSyncNew.Data
             //Database.EnsureCreated();
         }
 
-        public DbSet<Customer> Customer { get; set; }
+        public DbSet<Customer>? Customer { get; set; }
     }
 }
