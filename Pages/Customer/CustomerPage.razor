@@ -57,7 +57,7 @@
     private async void OnDelete(int CustomerId)
     {
         var a = await DialogService.Confirm("ต้องการลบ?", "แจ้งเตือน", new ConfirmOptions() { OkButtonText = "ใช่", CancelButtonText = "ไม่" });
-        if (a.Value)
+        if (a != null && a.Value == true)
         {
             await Task.Run(() => { CustomerService.DeleteCustomer(CustomerId); });
             LoadCustomer();

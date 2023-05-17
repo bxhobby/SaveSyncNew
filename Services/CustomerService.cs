@@ -40,19 +40,19 @@ namespace SaveSyncNew.Services
             catch { }
         }
 
-        public List<Customer>? LoadAllCustomer()
+        public List<Customer> LoadAllCustomer()
         {
             try
             {
                 return DataContext.Customer.ToList();
             }
-            catch
+            catch (Exception E)
             {
                 return new List<Customer>
                 {
                     new Customer
                     {
-                        LicenseCode="NULL",
+                        LicenseCode=E.Message,
                         ShopCode="NULL",
                         ShopName="NULL",
                         CustomerName="NULL",
