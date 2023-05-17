@@ -1,4 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using SaveSyncNew.Components
+
+@inject DialogService DS
+
+@inherits LayoutComponentBase
 
 <RadzenDialog />
 <RadzenNotification></RadzenNotification>
@@ -10,17 +14,17 @@
             <RadzenLabel Text="โปรแกรมบันทึกข้อมูลลูกค้า Sync New" />
         </RadzenStack>
     </RadzenHeader>
-    <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+    <RadzenSidebar @bind-Expanded="@sidebar1Expanded" Style="width:250px;">
         <RadzenPanelMenu>
             <RadzenPanelMenuItem Text="หน้าแรก" Icon="home" Path="/" />
-            <RadzenPanelMenuItem Text="ลูกค้า" Icon="account_box" Path="/customer"/>
+            <RadzenPanelMenuItem Text="ลูกค้า" Icon="account_box" Path="/customer" Click="OpenProgressBar"/>
         </RadzenPanelMenu>
         <div class="rz-p-4">
             Sidebar
         </div>
     </RadzenSidebar>
-    <RadzenBody>
-        <div class="rz-p-4">
+    <RadzenBody Style="padding:10px;">
+        <div>
             @Body
         </div>
     </RadzenBody>
@@ -31,4 +35,9 @@
 
 @code {
     bool sidebar1Expanded = true;
+
+    public void OpenProgressBar()
+    {
+        DS.Open("กำลังโหลดข้อมูล", ds =>@<ProgressBar></ProgressBar>);
+    }
 }

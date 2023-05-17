@@ -1,26 +1,82 @@
 ﻿@page "/customer"
 
 @using Models
+@using SaveSyncNew.Pages.Customer.Components
+@using SaveSyncNew.Services
+
 @inject DialogService DialogService
+@inject CustomerService CustomerService
 
 <RadzenButton Text="เพิ่มลูกค้า" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Success" Click="OpenAddCustomer" />
 
-<RadzenDataGrid Data="ListCustomer">
-    <RadzenDataGridColumn Property="CustomerName" TItem="Customer"></RadzenDataGridColumn>
+<RadzenDataGrid class="CustomerTable" AllowPaging="true" PageSize="6" AllowColumnResize=true Data="ListCustomer" TItem="Customer"
+                AllowSorting="true" ShowPagingSummary="true" PagerHorizontalAlign="HorizontalAlign.Left">
+    <Columns>
+        <RadzenDataGridColumn TItem="Customer" Width="100px" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Frozen="true">
+            <Template Context="data">
+                @if (data.CustomerName is not "NULL")
+                {
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light"></RadzenButton>
+                    <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Class="rz-ms-1" Click="@(()=>OnDelete(data.CustomerId))"></RadzenButton>
+                }
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Width="50px" TItem="Customer" Title="#" TextAlign="TextAlign.Center">
+            <Template Context="data">
+                @if (ListCustomer is not null)
+                {
+                    <RadzenText Text="@((ListCustomer.IndexOf(data) + 1).ToString())" TextStyle="TextStyle.Body2"></RadzenText>
+                }
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Width="120px" TItem="Customer" Property="LicenseCode" Title="รหัสไลเซนส์" />
+        <RadzenDataGridColumn Width="150px" TItem="Customer" Property="ShopCode" Title="รหัสร้าน" />
+        <RadzenDataGridColumn Width="200px" TItem="Customer" Property="ShopName" Title="ชื่อร้าน" />
+        <RadzenDataGridColumn Width="200px" TItem="Customer" Property="CustomerName" Title="ชื่อ" />
+        <RadzenDataGridColumn Width="150px" TItem="Customer" Property="Province" Title="จังหวัด" />
+        <RadzenDataGridColumn Width="120px" TItem="Customer" Property="Phone" Title="เบอร์โทร" />
+    </Columns>
 </RadzenDataGrid>
 
+<style>
+    .CustomerTable {
+        --rz-grid-header-background-color: var(--rz-secondary-light);
+        --rz-grid-header-color: white;
+        margin-top: 0.5rem;
+    }
 
+    .rz-grid-table-fixed .rz-frozen-cell {
+        background: var(--rz-secondary-light);
+    }
+</style>
 
 @code {
     private List<Customer>? ListCustomer;
-    public async Task OpenAddCustomer()
+    private RadzenDataGrid<Customer>? OrderCustomer;
+
+    private async void OnDelete(int CustomerId)
     {
-        await DialogService.OpenAsync("เพิ่มข้อมูลลูกค้า", ds =>@<SaveSyncNew.Components.FormAddCustomer>
-    </SaveSyncNew.Components.FormAddCustomer>);
+        var a = await DialogService.Confirm("ต้องการลบ?", "แจ้งเตือน", new ConfirmOptions() { OkButtonText = "ใช่", CancelButtonText = "ไม่" });
+        if (a.Value)
+        {
+            await Task.Run(() => { CustomerService.DeleteCustomer(CustomerId); });
+            LoadCustomer();
+        }
     }
 
-    @* protected override void OnInitialized()
+    private void OpenAddCustomer()
     {
-        ListProvince = ThaiDataService.LoadProvince();
-    } *@
+        DialogService.Open("เพิ่มข้อมูลลูกค้า", ds =>@<FormAddCustomer ReloadCustomer="LoadCustomer"></FormAddCustomer>);
+    }
+
+    private void LoadCustomer()
+    {
+        ListCustomer = CustomerService.LoadAllCustomer();
+        StateHasChanged();
+    }
+
+    protected override void OnInitialized()
+    {
+        LoadCustomer();
+    }
 }

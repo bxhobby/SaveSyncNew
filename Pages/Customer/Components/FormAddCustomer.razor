@@ -1,4 +1,5 @@
 ﻿@using Models
+@using SaveSyncNew.Components
 @using Services
 
 @inject ThaiDataService ThaiDataService
@@ -13,10 +14,10 @@
         </RadzenColumn>
         <RadzenColumn>
             <RadzenTextBox @bind-Value="Customer.LicenseCode" Name="LicenseCode" Style="height: 1.5rem;"
-                MaxLength="4" />
+                           MaxLength="4" />
             @* <RadzenRequiredValidator Component="LicenseCode" Text="ต้องใส่ข้อมูล"></RadzenRequiredValidator> *@
             <RadzenLengthValidator Component="LicenseCode" Min="4" Text="ต้องใส่ให้ครบ 4 ตัวอักษร" Popup="true"
-                Style="margin-bottom: 1rem; position: relative;" />
+                                   Style="margin-bottom: 1rem; position: relative;" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -44,6 +45,15 @@
         <RadzenColumn>
             <RadzenTextBox @bind-Value="Customer.CustomerName" Style="height: 1.5rem;" Name="CustomerName" />
             <RadzenRequiredValidator Component="CustomerName" Text="ต้องใส่ข้อมูล"></RadzenRequiredValidator>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn>
+            <RadzenLabel Text="เบอร์โทร"></RadzenLabel>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenTextBox @bind-Value="Customer.Phone" Style="height: 1.5rem;" Name="Phone" MaxLength="10" />
+            <RadzenLengthValidator Style="margin-bottom: 1rem; position: relative;" Component="Phone" Min="10" Text="ต้องใส่ให้ครบ 10 ตัว" Popup="true"></RadzenLengthValidator>
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -85,7 +95,7 @@
         </RadzenColumn>
         <RadzenColumn>
             <RadzenNumeric ShowUpDown="false" TValue="int?" @bind-Value="Customer.PostalCode" ReadOnly="true"
-                Style="padding: 0%;" />
+                           Style="padding: 0%;" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2 rz-mt-6" JustifyContent="JustifyContent.Center">
@@ -108,6 +118,8 @@
 </style>
 
 @code {
+    [Parameter]
+    public EventCallback ReloadCustomer { get; set; }
     private Customer Customer = new();
     private List<string>? ListProvince;
     private List<string>? ListDistrict;
@@ -149,34 +161,35 @@
         }
     }
 
-    private void OnSave()
+    private async void OnSave()
     {
         DialogService.Close();
         Console.WriteLine("Save Data");
         DialogService.Open("กำลังบันทึกข้อมูล", ds => @<ProgressBar></ProgressBar>);
-        Task.Run(() =>
-            {
-    Message = CustomerService.AddCustomer(Customer);
-    Console.WriteLine("open Progress");
-    DialogService.Close();
-    if (Message == "Success")
-    {
-        NotificationService.Notify(new NotificationMessage
+        await Task.Run(() =>
+     {
+         Message = CustomerService.AddCustomer(Customer);
+     });
+        Console.WriteLine("open Progress");
+
+        if (Message == "Success")
+        {
+            NotificationService.Notify(new NotificationMessage
                     {
                         Severity = NotificationSeverity.Success,
                         Summary = "",
                         Detail = "บันทึกข้อมูลสำเร็จ",
                         Duration = 4000
                     });
-        DialogService.Close();
-    }
-    else
-    {
-        DialogService.Close();
-        Console.WriteLine("open Error");
-        DialogService.Open("พบข้อผิดพลาด", ds => @<ErrorDialog Message="@Message"></ErrorDialog>);
-    }
-});
+            DialogService.Close();
+        }
+        else
+        {
+            DialogService.Close();
+            Console.WriteLine("open Error");
+            DialogService.Open("พบข้อผิดพลาด", ds => @<ErrorDialog Message="@Message"></ErrorDialog>);
+        }
+        await ReloadCustomer.InvokeAsync();
     }
 
     protected override void OnInitialized()
