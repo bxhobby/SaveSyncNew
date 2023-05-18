@@ -15,8 +15,4 @@
     <PackageReference Include="Radzen.Blazor" Version="4.10.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pages\Shop\Components\" />
-  </ItemGroup>
-
 </Project>

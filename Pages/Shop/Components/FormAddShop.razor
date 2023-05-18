@@ -1,0 +1,67 @@
+﻿@using SaveSyncNew.Models
+
+@inject DialogService Ds
+
+<RadzenTemplateForm TItem="Shop">
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn>
+            <RadzenText Text="รหัสผลิตภัณท์"></RadzenText>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenTextBox></RadzenTextBox>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn>
+            <RadzenText Text="รหัสร้านค้า"></RadzenText>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenTextBox></RadzenTextBox>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn>
+            <RadzenText Text="ชื่อร้าน"></RadzenText>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenTextBox></RadzenTextBox>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn>
+            <RadzenText Text="วันที่เริ่มต้น"></RadzenText>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenTextBox></RadzenTextBox>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn>
+            <RadzenText Text="วันที่สิ้นสุด"></RadzenText>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenTextBox></RadzenTextBox>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow class="rz-mb-2">
+        <RadzenColumn>
+            <RadzenText Text="วันที่ชำระ"></RadzenText>
+        </RadzenColumn>
+        <RadzenColumn Size="2">
+            <RadzenDatePicker @bind-Value="PayDate"></RadzenDatePicker>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow class="rz-mb-2 rz-mt-6" JustifyContent="JustifyContent.Center">
+        <RadzenColumn Size="2">
+            <RadzenButton Text="บันทึก" ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit"></RadzenButton>
+        </RadzenColumn>
+        <RadzenColumn Size="2">
+            <RadzenButton Text="ยกเลิก" ButtonStyle="ButtonStyle.Secondary" Click="@(()=>Ds.Close())">
+            </RadzenButton>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenTemplateForm>
+
+@code {
+    private DateTime PayDate = DateTime.Now;
+}

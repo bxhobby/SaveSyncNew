@@ -2,18 +2,22 @@
 
 @using SaveSyncNew.Services
 @using SaveSyncNew.Models
+@using SaveSyncNew.Pages.Shop.Components
 
 @inject CustomerService CusService
+@inject DialogService Ds
 
 @if (Customer != null)
 {
-    <h4>@Customer.CustomerName</h4>
-    <h4>@Customer.Address @$"Customer.SubDistrict" @Customer.District @Customer.Province @Customer.PostalCode</h4>
+    <RadzenText>@Customer.CustomerName</RadzenText>
+    <RadzenText Text="@CustomerDetail"></RadzenText>
 }
 else
 {
-    <h4>null</h4>
+    <RadzenText>null</RadzenText>
 }
+
+<RadzenButton Text="เพิ่มร้านค้า" ButtonStyle="ButtonStyle.Success" Click="AddShop"></RadzenButton>
 
 <RadzenDataGrid class="CustomerTable" AllowPaging="true" PageSize="6" AllowColumnResize=true Data="ListShop" TItem="Shop"
                 AllowSorting="true" ShowPagingSummary="true" PagerHorizontalAlign="HorizontalAlign.Left">
@@ -57,9 +61,17 @@ else
     public int CustomerId { get; set; }
     private Customer? Customer;
     private List<Shop>? ListShop;
+    private string? CustomerDetail;
+
+    private void AddShop()
+    {
+        Ds.Open("เพิ่มร้านค้า",ds => @<FormAddShop></FormAddShop>);
+    }
 
     protected override void OnInitialized()
     {
         Customer = CusService.LoadCustomerFormId(CustomerId);
+        if (Customer == null) return;
+        CustomerDetail = $"{Customer.Address} ต.{Customer.SubDistrict} อ.{Customer.District} จ.{Customer.Province} {Customer.PostalCode}";
     }
 }
