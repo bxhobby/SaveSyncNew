@@ -1,0 +1,65 @@
+﻿@page "/shop/{CustomerId:int}"
+
+@using SaveSyncNew.Services
+@using SaveSyncNew.Models
+
+@inject CustomerService CusService
+
+@if (Customer != null)
+{
+    <h4>@Customer.CustomerName</h4>
+    <h4>@Customer.Address @$"Customer.SubDistrict" @Customer.District @Customer.Province @Customer.PostalCode</h4>
+}
+else
+{
+    <h4>null</h4>
+}
+
+<RadzenDataGrid class="CustomerTable" AllowPaging="true" PageSize="6" AllowColumnResize=true Data="ListShop" TItem="Shop"
+                AllowSorting="true" ShowPagingSummary="true" PagerHorizontalAlign="HorizontalAlign.Left">
+    <Columns>
+        <RadzenDataGridColumn TItem="Shop" Width="100px" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Frozen="true">
+            <Template Context="data">
+                @if (data.ShopName == "NULL") return;
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light"></RadzenButton>
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Class="rz-ms-1"></RadzenButton>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Width="50px" TItem="Shop" Title="#" TextAlign="TextAlign.Center">
+            <Template Context="data">
+                @if (ListShop == null) return;
+                <RadzenText Text="@((ListShop.IndexOf(data) + 1).ToString())" TextStyle="TextStyle.Body2"></RadzenText>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Width="120px" TItem="Shop" Property="LicenseCode" Title="รหัสไลเซนส์" />
+        <RadzenDataGridColumn Width="150px" TItem="Shop" Property="ShopCode" Title="รหัสร้าน" />
+        <RadzenDataGridColumn Width="200px" TItem="Shop" Property="ShopName" Title="ชื่อร้าน" />
+        <RadzenDataGridColumn Width="200px" TItem="Shop" Property="StartDate" Title="เริ่มต้น" />
+        <RadzenDataGridColumn Width="150px" TItem="Shop" Property="EndDate" Title="สิ้นสุด" />
+        <RadzenDataGridColumn Width="120px" TItem="Shop" Property="PayDate" Title="ชำระ" />
+    </Columns>
+</RadzenDataGrid>
+
+<style>
+    .CustomerTable {
+        --rz-grid-header-background-color: var(--rz-series-1);
+        --rz-grid-header-color: white;
+        margin-top: 0.5rem;
+    }
+
+    .rz-grid-table-fixed .rz-frozen-cell {
+        background: var(--rz-series-1);
+    }
+</style>
+
+@code {
+    [Parameter]
+    public int CustomerId { get; set; }
+    private Customer? Customer;
+    private List<Shop>? ListShop;
+
+    protected override void OnInitialized()
+    {
+        Customer = CusService.LoadCustomerFormId(CustomerId);
+    }
+}

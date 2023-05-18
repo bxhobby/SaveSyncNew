@@ -1,11 +1,14 @@
 ﻿@page "/customer"
 
 @using Models
+@using SaveSyncNew.Components
 @using SaveSyncNew.Pages.Customer.Components
 @using SaveSyncNew.Services
 
 @inject DialogService DialogService
 @inject CustomerService CustomerService
+@inject NotificationService NotificationService
+@inject NavigationManager Nvm
 
 <RadzenButton Text="เพิ่มลูกค้า" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Success" Click="OpenAddCustomer" />
 
@@ -14,19 +17,15 @@
     <Columns>
         <RadzenDataGridColumn TItem="Customer" Width="100px" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Frozen="true">
             <Template Context="data">
-                @if (data.CustomerName is not "NULL")
-                {
-                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light"></RadzenButton>
-                    <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Class="rz-ms-1" Click="@(()=>OnDelete(data.CustomerId))"></RadzenButton>
-                }
+                @if (data.CustomerName == "NULL") return;
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Click="@(()=>GoShopPage(data.CustomerId))"></RadzenButton>
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Class="rz-ms-1" Click="@(()=>OnDelete(data.CustomerId))"></RadzenButton>
             </Template>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn Width="50px" TItem="Customer" Title="#" TextAlign="TextAlign.Center">
             <Template Context="data">
-                @if (ListCustomer is not null)
-                {
-                    <RadzenText Text="@((ListCustomer.IndexOf(data) + 1).ToString())" TextStyle="TextStyle.Body2"></RadzenText>
-                }
+                @if (ListCustomer == null) return;
+                <RadzenText Text="@((ListCustomer.IndexOf(data) + 1).ToString())" TextStyle="TextStyle.Body2"></RadzenText>
             </Template>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn Width="120px" TItem="Customer" Property="LicenseCode" Title="รหัสไลเซนส์" />
@@ -54,13 +53,35 @@
     private List<Customer>? ListCustomer;
     private RadzenDataGrid<Customer>? OrderCustomer;
 
+    private void GoShopPage(int CustomerId)
+    {
+        Nvm.NavigateTo($"/shop/{CustomerId}");
+    }
+
     private async void OnDelete(int CustomerId)
     {
         var a = await DialogService.Confirm("ต้องการลบ?", "แจ้งเตือน", new ConfirmOptions() { OkButtonText = "ใช่", CancelButtonText = "ไม่" });
         if (a != null && a.Value == true)
         {
-            await Task.Run(() => { CustomerService.DeleteCustomer(CustomerId); });
+            DialogService.Open("กำลังลบข้อมูล", ds => @<ProgressBar></ProgressBar>);
+            string Message = "";
+            await Task.Run(() => { Message = CustomerService.DeleteCustomer(CustomerId); });
             LoadCustomer();
+            DialogService.Close();
+            if (Message == "Success")
+            {
+                NotificationService.Notify(new NotificationMessage
+                        {
+                            Severity = NotificationSeverity.Success,
+                            Summary = "",
+                            Detail = "ลบข้อมูลสำเร็จ",
+                            Duration = 4000
+                        });
+            }
+            else
+            {
+                DialogService.Open("พบข้อผิดพลาด", ds => @<ErrorDialog Message="@Message"></ErrorDialog>);
+            }
         }
     }
 

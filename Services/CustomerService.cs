@@ -11,13 +11,19 @@ namespace SaveSyncNew.Services
             DataContext = a;
         }
 
+        public Customer? LoadCustomerFormId(int CustomerId)
+        {
+            Customer? FindCustomer = DataContext.Customer.Find(CustomerId);
+            return FindCustomer;
+        }
+
         public string AddCustomer(Customer Customer)
         {
             try
             {
                 Customer.RegisterDate = DateTime.Now;
                 DataContext.Customer.Add(Customer);
-                var a = DataContext.SaveChanges();
+                DataContext.SaveChanges();
                 return "Success";
             }
             catch (Exception e)
@@ -26,25 +32,28 @@ namespace SaveSyncNew.Services
             }
         }
 
-        public void DeleteCustomer(int CustomerId)
+        public string DeleteCustomer(int CustomerId)
         {
-            Customer? FindCustomer = DataContext.Customer.Find(CustomerId);
             try
             {
-                if (FindCustomer is not null)
-                {
-                    DataContext.Customer.Remove(FindCustomer);
-                    DataContext.SaveChanges();
-                }
+                Customer? FindCustomer = LoadCustomerFormId(CustomerId);
+                if (FindCustomer is null) return "ไม่พบข้อมูลลูกค้า";
+                FindCustomer.IsDeleted = true;
+                DataContext.Customer.Update(FindCustomer);
+                DataContext.SaveChanges();
+                return "Success";
             }
-            catch { }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
         }
 
         public List<Customer> LoadAllCustomer()
         {
             try
             {
-                return DataContext.Customer.ToList();
+                return DataContext.Customer.Where(a => a.IsDeleted != true).ToList();
             }
             catch (Exception E)
             {

@@ -13,11 +13,8 @@
             <RadzenLabel Text="รหัสผลิตภัณท์"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="Customer.LicenseCode" Name="LicenseCode" Style="height: 1.5rem;"
-                           MaxLength="4" />
-            @* <RadzenRequiredValidator Component="LicenseCode" Text="ต้องใส่ข้อมูล"></RadzenRequiredValidator> *@
-            <RadzenLengthValidator Component="LicenseCode" Min="4" Text="ต้องใส่ให้ครบ 4 ตัวอักษร" Popup="true"
-                                   Style="margin-bottom: 1rem; position: relative;" />
+            <RadzenTextBox @bind-Value="Customer.LicenseCode" Name="LicenseCode" Style="height: 1.5rem;" MaxLength="4" />
+            <RadzenLengthValidator Component="LicenseCode" Min="4" Text="ต้องใส่ให้ครบ 4 ตัวอักษร" Popup="true" Style="margin-bottom: 1rem; position: relative;" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -25,7 +22,7 @@
             <RadzenLabel Text="รหัสร้านค้า"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="Customer.ShopCode" Style="height: 1.5rem;" Name="ShopCode" />
+            <RadzenTextBox @bind-Value="Customer.ShopCode" Style="height: 1.5rem;" Name="ShopCode" MaxLength="50" />
             <RadzenRequiredValidator Component="ShopCode" Text="ต้องใส่ข้อมูล"></RadzenRequiredValidator>
         </RadzenColumn>
     </RadzenRow>
@@ -34,7 +31,7 @@
             <RadzenLabel Text="ชื่อร้าน"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="Customer.ShopName" Style="height: 1.5rem;" Name="ShopName" />
+            <RadzenTextBox @bind-Value="Customer.ShopName" Style="height: 1.5rem;" Name="ShopName" MaxLength="100" />
             <RadzenRequiredValidator Component="ShopName" Text="ต้องใส่ข้อมูล"></RadzenRequiredValidator>
         </RadzenColumn>
     </RadzenRow>
@@ -43,7 +40,7 @@
             <RadzenLabel Text="ชื่อลูกค้า"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="Customer.CustomerName" Style="height: 1.5rem;" Name="CustomerName" />
+            <RadzenTextBox @bind-Value="Customer.CustomerName" Style="height: 1.5rem;" Name="CustomerName" MaxLength="200" />
             <RadzenRequiredValidator Component="CustomerName" Text="ต้องใส่ข้อมูล"></RadzenRequiredValidator>
         </RadzenColumn>
     </RadzenRow>
@@ -61,7 +58,7 @@
             <RadzenLabel Text="ที่อยู่"></RadzenLabel>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox @bind-Value="Customer.Address" Style="height: 1.5rem;" Name="Address" />
+            <RadzenTextBox @bind-Value="Customer.Address" Style="height: 1.5rem;" Name="Address" MaxLength="200" />
             <RadzenRequiredValidator Component="Address" Text="ต้องใส่ข้อมูล"></RadzenRequiredValidator>
         </RadzenColumn>
     </RadzenRow>

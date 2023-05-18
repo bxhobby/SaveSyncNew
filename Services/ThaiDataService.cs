@@ -37,108 +37,86 @@ namespace SaveSyncNew.Services
         public List<string>? LoadProvince()
         {
             List<Province>? ProvinceData = LoadProvinceData();
-
-            if (ProvinceData is not null)
+            if (ProvinceData == null) return null;
+            List<string> ListProvince = new();
+            foreach (Province Province in ProvinceData)
             {
-                List<string> ListProvince = new();
-                foreach (Province Province in ProvinceData)
+                if (Province.ProvinceNameTh != null)
                 {
-                    if (Province.ProvinceNameTh is not null)
-                    {
-                        ListProvince.Add(Province.ProvinceNameTh);
-                    }
+                    ListProvince.Add(Province.ProvinceNameTh);
                 }
-                return ListProvince;
             }
-            else { return null; }
+            return ListProvince;
         }
 
         public List<string>? LoadDistrict(string ProvincName)
         {
+            List<string> ListDistrict = new();
+
             List<Province>? ProvinceData = LoadProvinceData();
-            if (ProvinceData is not null)
+            if (ProvinceData == null) return null;
+
+            Province? SearchProvince = ProvinceData.FirstOrDefault(p => p.ProvinceNameTh == ProvincName);
+            if (SearchProvince == null) return null;
+
+            int ProvinceCode = SearchProvince.ProvinceCode;
+            List<District>? DistrictData = LoadDistrictData();
+            if (DistrictData == null) return null;
+
+            List<District> SearchListDistrict = DistrictData.Where(x => x.provinceCode == SearchProvince.ProvinceCode).ToList();
+            foreach (District District in SearchListDistrict)
             {
-                Province? SearchProvince = ProvinceData.FirstOrDefault(p => p.ProvinceNameTh == ProvincName);
-                if (SearchProvince is not null)
+                if (District.districtNameTh != null)
                 {
-                    int ProvinceCode = SearchProvince.ProvinceCode;
-                    List<District>? DistrictData = LoadDistrictData();
-
-                    if (DistrictData is not null)
-                    {
-                        List<string> ListDistrict = new();
-                        List<District> SearchListDistrict = DistrictData.Where(x => x.provinceCode == SearchProvince.ProvinceCode).ToList();
-
-                        foreach (District District in SearchListDistrict)
-                        {
-                            if (District.districtNameTh is not null)
-                            {
-                                ListDistrict.Add(District.districtNameTh);
-                            }
-                        }
-                        return ListDistrict;
-                    }
-                    else { return null; }
+                    ListDistrict.Add(District.districtNameTh);
                 }
-                else { return null; }
             }
-            else { return null; }
+            return ListDistrict;
         }
 
         public List<string>? LoadSubDistrict(string SelectDistrictName)
         {
+            List<string> ListSubDistrict = new();
+
             List<District>? DistrictData = LoadDistrictData();
-            if (DistrictData is not null)
+            if (DistrictData == null) return null;
+
+            District? SearchDistrict = DistrictData.FirstOrDefault(x => x.districtNameTh == SelectDistrictName);
+            if (SearchDistrict == null) return null;
+
+            int DistrictCode = SearchDistrict.districtCode;
+            List<SubDistrict>? SubDistrictData = LoadSubDistrictData();
+            if (SubDistrictData == null) return null;
+
+
+            List<SubDistrict> SearchListSubDistrict = SubDistrictData.Where(x => x.DistrictCode == SearchDistrict.districtCode).ToList();
+
+            foreach (SubDistrict SubDistrict in SearchListSubDistrict)
             {
-                District? SearchDistrict = DistrictData.FirstOrDefault(x => x.districtNameTh == SelectDistrictName);
-                if (SearchDistrict is not null)
+                if (SubDistrict.SubdistrictNameTh != null)
                 {
-                    int DistrictCode = SearchDistrict.districtCode;
-                    List<SubDistrict>? SubDistrictData = LoadSubDistrictData();
-
-                    if (SubDistrictData is not null)
-                    {
-                        List<string> ListSubDistrict = new();
-                        List<SubDistrict> SearchListSubDistrict = SubDistrictData.Where(x => x.DistrictCode == SearchDistrict.districtCode).ToList();
-
-                        foreach (SubDistrict SubDistrict in SearchListSubDistrict)
-                        {
-                            if (SubDistrict.SubdistrictNameTh is not null)
-                            {
-                                ListSubDistrict.Add(SubDistrict.SubdistrictNameTh);
-                            }
-                        }
-                        return ListSubDistrict;
-                    }
-                    else { return null; }
+                    ListSubDistrict.Add(SubDistrict.SubdistrictNameTh);
                 }
-                else { return null; }
             }
-            else { return null; }
+            return ListSubDistrict;
         }
+
         public int? LoadPostalCode(string SelectSubDistrictName, string SelectDistrictName)
         {
             List<SubDistrict>? SubDistrictData = LoadSubDistrictData();
             List<District>? DistrictData = LoadDistrictData();
+            if (SubDistrictData == null || DistrictData == null) return null;
 
-            if (SubDistrictData is not null && DistrictData is not null)
-            {
-                District? SearchDistrict = DistrictData.FirstOrDefault(x => x.districtNameTh == SelectDistrictName);
-                if (SearchDistrict is not null)
-                {
-                    SubDistrict? SearchSubDistrict = SubDistrictData.FirstOrDefault
-                    (
-                        x => x.SubdistrictNameTh == SelectSubDistrictName && x.DistrictCode == SearchDistrict.districtCode
-                    );
-                    if (SearchSubDistrict is not null)
-                    {
-                        return SearchSubDistrict.PostalCode;
-                    }
-                    else { return null; }
-                }
-                else { return null; }
-            }
-            else { return null; }
+            District? SearchDistrict = DistrictData.FirstOrDefault(x => x.districtNameTh == SelectDistrictName);
+            if (SearchDistrict == null) return null;
+
+            SubDistrict? SearchSubDistrict = SubDistrictData.FirstOrDefault
+            (
+                x => x.SubdistrictNameTh == SelectSubDistrictName && x.DistrictCode == SearchDistrict.districtCode
+            );
+            if (SearchSubDistrict == null) return null;
+
+            return SearchSubDistrict.PostalCode;
         }
     }
 }

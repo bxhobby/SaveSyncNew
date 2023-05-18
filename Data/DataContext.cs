@@ -11,5 +11,6 @@ namespace SaveSyncNew.Data
         }
 
         public DbSet<Customer> Customer { get; set; }
+        public DbSet<Shop> Shop { get; set; }
     }
 }

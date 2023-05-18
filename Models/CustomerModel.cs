@@ -41,5 +41,6 @@ namespace SaveSyncNew.Models
 
         [Column(TypeName = "datetime")]
         public DateTime RegisterDate { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }
