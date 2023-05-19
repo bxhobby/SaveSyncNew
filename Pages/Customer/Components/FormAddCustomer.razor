@@ -1,11 +1,9 @@
 ﻿@using Models
-@using SaveSyncNew.Components
 @using Services
 
 @inject ThaiDataService ThaiDataService
 @inject DialogService DialogService
-@inject CustomerService CustomerService
-@inject NotificationService NotificationService
+@inject CustomerService CusService
 
 <RadzenTemplateForm TItem="Customer" Data="Customer" Submit="OnSave">
     <RadzenRow class="rz-mb-2">
@@ -116,12 +114,13 @@
 
 @code {
     [Parameter]
-    public EventCallback ReloadCustomer { get; set; }
+    public int CustomerId { get; set; }
+    [Parameter]
+    public EventCallback<Customer> Function { get; set; }
     private Customer Customer = new();
     private List<string>? ListProvince;
     private List<string>? ListDistrict;
     private List<string>? ListSubDistrict;
-    private string? Message;
 
     private void ProvinceOnChange()
     {
@@ -129,68 +128,40 @@
         Customer.SubDistrict = "";
         Customer.PostalCode = null;
 
-        if (ListSubDistrict is not null)
-        {
-            ListSubDistrict.Clear();
-        }
-
-        if (Customer.Province is not null)
-        {
-            ListDistrict = ThaiDataService.LoadDistrict(Customer.Province);
-        }
+        if (Customer.Province == null) return;
+        ListDistrict = ThaiDataService.LoadDistrict(Customer.Province);
     }
 
     private void DistrictOnChange()
     {
         Customer.SubDistrict = "";
         Customer.PostalCode = null;
-        if (Customer.District is not null)
-        {
-            ListSubDistrict = ThaiDataService.LoadSubDistrict(Customer.District);
-        }
+        if (Customer.District == null) return;
+        ListSubDistrict = ThaiDataService.LoadSubDistrict(Customer.District);
     }
 
     private void SubDistrictOnChange()
     {
-        if (Customer.SubDistrict is not null && Customer.District is not null)
-        {
-            Customer.PostalCode = ThaiDataService.LoadPostalCode(Customer.SubDistrict, Customer.District);
-        }
+        if (Customer.District == null) return;
+        if (Customer.SubDistrict == null) return;
+        Customer.PostalCode = ThaiDataService.LoadPostalCode(Customer.SubDistrict, Customer.District);
     }
 
-    private async void OnSave()
+    private void OnSave()
     {
-        DialogService.Close();
-        Console.WriteLine("Save Data");
-        DialogService.Open("กำลังบันทึกข้อมูล", ds => @<ProgressBar></ProgressBar>);
-        await Task.Run(() =>
-     {
-         Message = CustomerService.AddCustomer(Customer);
-     });
-        Console.WriteLine("open Progress");
-
-        if (Message == "Success")
-        {
-            NotificationService.Notify(new NotificationMessage
-                    {
-                        Severity = NotificationSeverity.Success,
-                        Summary = "",
-                        Detail = "บันทึกข้อมูลสำเร็จ",
-                        Duration = 4000
-                    });
-            DialogService.Close();
-        }
-        else
-        {
-            DialogService.Close();
-            Console.WriteLine("open Error");
-            DialogService.Open("พบข้อผิดพลาด", ds => @<ErrorDialog Message="@Message"></ErrorDialog>);
-        }
-        await ReloadCustomer.InvokeAsync();
+        Function.InvokeAsync(Customer);
     }
 
     protected override void OnInitialized()
     {
         ListProvince = ThaiDataService.LoadProvince();
+        if (CustomerId == 0) return;
+        Customer? FindCustomer = CusService.LoadCustomerFormId(CustomerId);
+        if (FindCustomer == null) return;
+        Customer = FindCustomer;
+        if (Customer.Province == null) return;
+        ListDistrict = ThaiDataService.LoadDistrict(Customer.Province);
+        if (Customer.District == null) return;
+        ListSubDistrict = ThaiDataService.LoadSubDistrict(Customer.District);
     }
 }

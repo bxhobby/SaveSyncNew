@@ -32,6 +32,20 @@ namespace SaveSyncNew.Services
             }
         }
 
+        public string UpdateCustomer(Customer Customer)
+        {
+            try
+            {
+                DataContext.Customer.Update(Customer);
+                DataContext.SaveChanges();
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
         public string DeleteCustomer(int CustomerId)
         {
             try

@@ -73,9 +73,9 @@ else
         Customer = CusService.LoadCustomerFormId(CustomerId);
         if (Customer == null) return;
         CustomerDetail = Customer.Address +
-        (String.IsNullOrEmpty(Customer.SubDistrict) == true ? "" : $"ต.{Customer.SubDistrict}") +
-        (String.IsNullOrEmpty(Customer.District) == true ? "" : $"อ.{Customer.District}") +
-        (String.IsNullOrEmpty(Customer.Province) == true ? "" : $"จ.{Customer.Province}") +
-        (String.IsNullOrEmpty(Customer.Province) == true ? "" : $"{Customer.PostalCode}");
+        (String.IsNullOrEmpty(Customer.SubDistrict) == true ? "" : $" ต.{Customer.SubDistrict}") +
+        (String.IsNullOrEmpty(Customer.District) == true ? "" : $" อ.{Customer.District}") +
+        (String.IsNullOrEmpty(Customer.Province) == true ? "" : $" จ.{Customer.Province}") +
+        (String.IsNullOrEmpty(Customer.Province) == true ? "" : $" {Customer.PostalCode}");
     }
 }

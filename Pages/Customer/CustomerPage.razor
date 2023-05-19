@@ -15,10 +15,11 @@
 <RadzenDataGrid class="CustomerTable" AllowPaging="true" PageSize="6" AllowColumnResize=true Data="ListCustomer" TItem="Customer"
                 AllowSorting="true" ShowPagingSummary="true" PagerHorizontalAlign="HorizontalAlign.Left">
     <Columns>
-        <RadzenDataGridColumn TItem="Customer" Width="100px" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Frozen="true">
+        <RadzenDataGridColumn TItem="Customer" Width="150px" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Frozen="true">
             <Template Context="data">
                 @if (data.CustomerName == "NULL") return;
-                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Click="@(()=>GoShopPage(data.CustomerId))"></RadzenButton>
+                <RadzenButton Icon="add" ButtonStyle="ButtonStyle.Light" Click="@(()=>GoShopPage(data.CustomerId))"></RadzenButton>
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="rz-ms-1" Click="@(()=>OpenEditCustomer(data.CustomerId))"></RadzenButton>
                 <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Class="rz-ms-1" Click="@(()=>OnDelete(data.CustomerId))"></RadzenButton>
             </Template>
         </RadzenDataGridColumn>
@@ -58,6 +59,16 @@
         Nvm.NavigateTo($"/shop/{CustomerId}");
     }
 
+    private void OpenAddCustomer()
+    {
+        DialogService.Open("เพิ่มข้อมูลลูกค้า", ds =>@<FormAddCustomer Function="CUCustomer"></FormAddCustomer>);
+    }
+
+    private void OpenEditCustomer(int CustomerId)
+    {
+        DialogService.Open("แก้ไขข้อมูลลูกค้า", ds =>@<FormAddCustomer CustomerId="CustomerId" Function="CUCustomer"></FormAddCustomer>);
+    }
+
     private async void OnDelete(int CustomerId)
     {
         var a = await DialogService.Confirm("ต้องการลบ?", "แจ้งเตือน", new ConfirmOptions() { OkButtonText = "ใช่", CancelButtonText = "ไม่" });
@@ -67,27 +78,45 @@
             string Message = "";
             await Task.Run(() => { Message = CustomerService.DeleteCustomer(CustomerId); });
             LoadCustomer();
-            DialogService.Close();
-            if (Message == "Success")
-            {
-                NotificationService.Notify(new NotificationMessage
-                        {
-                            Severity = NotificationSeverity.Success,
-                            Summary = "",
-                            Detail = "ลบข้อมูลสำเร็จ",
-                            Duration = 4000
-                        });
-            }
-            else
-            {
-                DialogService.Open("พบข้อผิดพลาด", ds => @<ErrorDialog Message="@Message"></ErrorDialog>);
-            }
+            ShowNotify("ลบข้อมูลสำเร็จ",Message);
         }
     }
 
-    private void OpenAddCustomer()
+    private void ShowNotify(string Text,string Message)
     {
-        DialogService.Open("เพิ่มข้อมูลลูกค้า", ds =>@<FormAddCustomer ReloadCustomer="LoadCustomer"></FormAddCustomer>);
+        if (Message == "Success")
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "",
+                        Detail = Text,
+                    Duration = 4000
+                });
+        }
+        else
+        {
+            DialogService.Open("พบข้อผิดพลาด", ds => @<ErrorDialog Message="@Message"></ErrorDialog>);
+        }
+        DialogService.Close();
+    }
+
+    private async void CUCustomer(Customer Customer)
+    {
+        DialogService.Close();
+        string Message = "";
+        DialogService.Open("กำลังบันทึกข้อมูล", ds => @<ProgressBar></ProgressBar>);
+        if(Customer.CustomerId == 0)
+        {
+            await Task.Run(() => { Message = CustomerService.AddCustomer(Customer); });
+        }
+
+        else if (Customer.CustomerId != 0)
+        {
+            await Task.Run(() => { Message = CustomerService.UpdateCustomer(Customer); });
+        }        
+        ShowNotify("บันทึกข้อมูลสำเร็จ", Message);
+        LoadCustomer();
     }
 
     private void LoadCustomer()
