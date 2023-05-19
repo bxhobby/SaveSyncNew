@@ -65,13 +65,17 @@ else
 
     private void AddShop()
     {
-        Ds.Open("เพิ่มร้านค้า",ds => @<FormAddShop></FormAddShop>);
+        Ds.Open("เพิ่มร้านค้า", ds => @<FormAddShop></FormAddShop>);
     }
 
     protected override void OnInitialized()
     {
         Customer = CusService.LoadCustomerFormId(CustomerId);
         if (Customer == null) return;
-        CustomerDetail = $"{Customer.Address} ต.{Customer.SubDistrict} อ.{Customer.District} จ.{Customer.Province} {Customer.PostalCode}";
+        CustomerDetail = Customer.Address +
+        (String.IsNullOrEmpty(Customer.SubDistrict) == true ? "" : $"ต.{Customer.SubDistrict}") +
+        (String.IsNullOrEmpty(Customer.District) == true ? "" : $"อ.{Customer.District}") +
+        (String.IsNullOrEmpty(Customer.Province) == true ? "" : $"จ.{Customer.Province}") +
+        (String.IsNullOrEmpty(Customer.Province) == true ? "" : $"{Customer.PostalCode}");
     }
 }

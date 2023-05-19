@@ -4,39 +4,39 @@
 
 <RadzenTemplateForm TItem="Shop">
     <RadzenRow class="rz-mb-2">
-        <RadzenColumn>
+        <RadzenColumn Size="4">
             <RadzenText Text="รหัสผลิตภัณท์"></RadzenText>
         </RadzenColumn>
         <RadzenColumn>
             <RadzenTextBox></RadzenTextBox>
         </RadzenColumn>
     </RadzenRow>
-    <RadzenRow class="rz-mb-2">
-        <RadzenColumn>
+    <RadzenRow class="rz-mb-3">
+        <RadzenColumn Size="4">
             <RadzenText Text="รหัสร้านค้า"></RadzenText>
         </RadzenColumn>
         <RadzenColumn>
             <RadzenTextBox></RadzenTextBox>
         </RadzenColumn>
     </RadzenRow>
-    <RadzenRow class="rz-mb-2">
-        <RadzenColumn>
+    <RadzenRow class="rz-mb-3">
+        <RadzenColumn Size="4">
             <RadzenText Text="ชื่อร้าน"></RadzenText>
         </RadzenColumn>
         <RadzenColumn>
             <RadzenTextBox></RadzenTextBox>
         </RadzenColumn>
     </RadzenRow>
-    <RadzenRow class="rz-mb-2">
-        <RadzenColumn>
+    <RadzenRow class="rz-mb-3">
+        <RadzenColumn Size="4">
             <RadzenText Text="วันที่เริ่มต้น"></RadzenText>
         </RadzenColumn>
         <RadzenColumn>
             <RadzenTextBox></RadzenTextBox>
         </RadzenColumn>
     </RadzenRow>
-    <RadzenRow class="rz-mb-2">
-        <RadzenColumn>
+    <RadzenRow class="rz-mb-3">
+        <RadzenColumn Size="4">
             <RadzenText Text="วันที่สิ้นสุด"></RadzenText>
         </RadzenColumn>
         <RadzenColumn>
@@ -44,16 +44,16 @@
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
-        <RadzenColumn>
+        <RadzenColumn Size="4">
             <RadzenText Text="วันที่ชำระ"></RadzenText>
         </RadzenColumn>
-        <RadzenColumn Size="2">
-            <RadzenDatePicker @bind-Value="PayDate"></RadzenDatePicker>
+        <RadzenColumn Size="4">
+            <RadzenDatePicker @bind-Value="PayDate" DateFormat="dd/MM/yyyy"></RadzenDatePicker>
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2 rz-mt-6" JustifyContent="JustifyContent.Center">
         <RadzenColumn Size="2">
-            <RadzenButton Text="บันทึก" ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit"></RadzenButton>
+            <RadzenButton Text="บันทึก" ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Click="ShowDate"></RadzenButton>
         </RadzenColumn>
         <RadzenColumn Size="2">
             <RadzenButton Text="ยกเลิก" ButtonStyle="ButtonStyle.Secondary" Click="@(()=>Ds.Close())">
@@ -62,6 +62,17 @@
     </RadzenRow>
 </RadzenTemplateForm>
 
+<style>
+    .rz-datepicker-calendar td a.rz-state-default, .rz-datepicker-calendar td span.rz-state-default, .rz-datepicker-calendar th a.rz-state-default, .rz-datepicker-calendar th span.rz-state-default {
+        height: 1rem;
+    }
+</style>
+
 @code {
-    private DateTime PayDate = DateTime.Now;
+    private DateTime PayDate = DateTime.Today;
+
+    private void ShowDate()
+    {
+        Console.WriteLine(PayDate);
+    }
 }
