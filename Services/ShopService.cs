@@ -15,6 +15,7 @@ namespace SaveSyncNew.Services
         {
             try
             {
+                ShopData.CreateDate = DateTime.Now;
                 _dbContext.Add(ShopData);
                 _dbContext.SaveChanges();
                 return "Success";
