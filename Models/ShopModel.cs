@@ -18,6 +18,7 @@ namespace SaveSyncNew.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public DateTime PayDate { get; set; }
+        public DateTime CreateDate { get; set; }
         public bool IsDeleted { get; set; }
     }
 }

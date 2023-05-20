@@ -11,6 +11,7 @@ builder.Services.AddScoped<ThaiDataService>();
 builder.Services.AddScoped<CustomerService>();
 builder.Services.AddDbContext<DataContext>(Option => Option.UseSqlServer(@"Data Source=.\SQLEXPRESS;Initial Catalog=CwCustomer;Trusted_Connection=True;MultipleActiveResultSets=true;Encrypt=true;TrustServerCertificate=true;"));
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<ShopService>();
 
 var app = builder.Build();
 

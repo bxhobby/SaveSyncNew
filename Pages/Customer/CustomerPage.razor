@@ -48,14 +48,46 @@
     .rz-grid-table-fixed .rz-frozen-cell {
         background: var(--rz-secondary-light);
     }
+
+    .rz-paginator.rz-align-left {
+        height: 50px;
+        display: flex;
+        justify-content: start;
+        align-items: start;
+    }
+
+    .rz-paginator-page.rz-state-active {
+        height: 5px;
+        padding: 0px;
+        margin: 0px;
+        border: none;
+    }
+
+    .rz-paginator-pages {
+        height: 50px;
+    }
+
+    .rz-paginator-element:not(.rz-state-disabled) {
+        padding: 0px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .rz-state-disabled.rz-paginator-element {
+        padding: 0px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 </style>
 
 @code {
     private List<Customer>? ListCustomer;
-    private RadzenDataGrid<Customer>? OrderCustomer;
 
     private void GoShopPage(int CustomerId)
     {
+        DialogService.Open("กำลังโหลดข้อมูล", ds => @<ProgressBar></ProgressBar>);
         Nvm.NavigateTo($"/shop/{CustomerId}");
     }
 
@@ -78,27 +110,27 @@
             string Message = "";
             await Task.Run(() => { Message = CustomerService.DeleteCustomer(CustomerId); });
             LoadCustomer();
-            ShowNotify("ลบข้อมูลสำเร็จ",Message);
+            ShowNotify("ลบข้อมูลสำเร็จ", Message);
         }
     }
 
-    private void ShowNotify(string Text,string Message)
+    private void ShowNotify(string Text, string Message)
     {
+        DialogService.Close();
         if (Message == "Success")
         {
             NotificationService.Notify(new NotificationMessage
-                {
-                    Severity = NotificationSeverity.Success,
-                    Summary = "",
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "",
                         Detail = Text,
-                    Duration = 4000
-                });
+                        Duration = 4000
+                    });
         }
         else
         {
-            DialogService.Open("พบข้อผิดพลาด", ds => @<ErrorDialog Message="@Message"></ErrorDialog>);
+            DialogService.Open("พบข้อผิดพลาด", ds => @<RadzenText Text="@Message" Style="color: red;"></RadzenText>);
         }
-        DialogService.Close();
     }
 
     private async void CUCustomer(Customer Customer)
@@ -106,7 +138,7 @@
         DialogService.Close();
         string Message = "";
         DialogService.Open("กำลังบันทึกข้อมูล", ds => @<ProgressBar></ProgressBar>);
-        if(Customer.CustomerId == 0)
+        if (Customer.CustomerId == 0)
         {
             await Task.Run(() => { Message = CustomerService.AddCustomer(Customer); });
         }
@@ -114,7 +146,7 @@
         else if (Customer.CustomerId != 0)
         {
             await Task.Run(() => { Message = CustomerService.UpdateCustomer(Customer); });
-        }        
+        }
         ShowNotify("บันทึกข้อมูลสำเร็จ", Message);
         LoadCustomer();
     }

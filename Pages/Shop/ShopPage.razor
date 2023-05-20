@@ -3,9 +3,12 @@
 @using SaveSyncNew.Services
 @using SaveSyncNew.Models
 @using SaveSyncNew.Pages.Shop.Components
+@using SaveSyncNew.Components
 
 @inject CustomerService CusService
+@inject ShopService ShopService
 @inject DialogService Ds
+@inject NotificationService Notify
 
 @if (Customer != null)
 {
@@ -17,7 +20,7 @@ else
     <RadzenText>null</RadzenText>
 }
 
-<RadzenButton Text="เพิ่มร้านค้า" ButtonStyle="ButtonStyle.Success" Click="AddShop"></RadzenButton>
+<RadzenButton Text="เพิ่มร้านค้า" ButtonStyle="ButtonStyle.Success" Click="OpenFormAddShop"></RadzenButton>
 
 <RadzenDataGrid class="CustomerTable" AllowPaging="true" PageSize="6" AllowColumnResize=true Data="ListShop" TItem="Shop"
                 AllowSorting="true" ShowPagingSummary="true" PagerHorizontalAlign="HorizontalAlign.Left">
@@ -25,7 +28,7 @@ else
         <RadzenDataGridColumn TItem="Shop" Width="100px" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Frozen="true">
             <Template Context="data">
                 @if (data.ShopName == "NULL") return;
-                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light"></RadzenButton>
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Click="@(()=>OpenFormEditShop(data.Id))"></RadzenButton>
                 <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Class="rz-ms-1"></RadzenButton>
             </Template>
         </RadzenDataGridColumn>
@@ -38,9 +41,21 @@ else
         <RadzenDataGridColumn Width="120px" TItem="Shop" Property="LicenseCode" Title="รหัสไลเซนส์" />
         <RadzenDataGridColumn Width="150px" TItem="Shop" Property="ShopCode" Title="รหัสร้าน" />
         <RadzenDataGridColumn Width="200px" TItem="Shop" Property="ShopName" Title="ชื่อร้าน" />
-        <RadzenDataGridColumn Width="200px" TItem="Shop" Property="StartDate" Title="เริ่มต้น" />
-        <RadzenDataGridColumn Width="150px" TItem="Shop" Property="EndDate" Title="สิ้นสุด" />
-        <RadzenDataGridColumn Width="120px" TItem="Shop" Property="PayDate" Title="ชำระ" />
+        <RadzenDataGridColumn Width="100px" TItem="Shop" Property="StartDate" Title="เริ่มต้น">
+            <Template Context="data">
+                <RadzenText Text="@data.StartDate.ToString(format:"dd/MM/yyyy")" TextStyle="TextStyle.Body2" class="text-danger mt-2"></RadzenText>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Width="100px" TItem="Shop" Property="EndDate" Title="สิ้นสุด">
+            <Template Context="data">
+                <RadzenText Text="@data.EndDate.ToString(format:"dd/MM/yyyy")" TextStyle="TextStyle.Body2" class="text-danger mt-2"></RadzenText>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Width="100px" TItem="Shop" Property="PayDate" Title="ชำระ">
+            <Template Context="data">
+                <RadzenText Text="@data.PayDate.ToString(format:"dd/MM/yyyy")" TextStyle="TextStyle.Body2" class="text-danger mt-2"></RadzenText>
+            </Template>
+        </RadzenDataGridColumn>
     </Columns>
 </RadzenDataGrid>
 
@@ -63,9 +78,66 @@ else
     private List<Shop>? ListShop;
     private string? CustomerDetail;
 
-    private void AddShop()
+    private void OpenFormAddShop()
     {
-        Ds.Open("เพิ่มร้านค้า", ds => @<FormAddShop></FormAddShop>);
+        Ds.Open("เพิ่มร้านค้า", ds => @<FormAddShop Function="AddShop" ReciveCustomerId="CustomerId"></FormAddShop>);
+    }
+
+    private void OpenFormEditShop(int ShopId)
+    {
+        Ds.Open("เพิ่มร้านค้า", ds => @<FormAddShop Function="UpdateShop" ReciveShopId="ShopId"></FormAddShop>);
+    }
+
+    private async void AddShop(Shop ShopData)
+    {
+        string Message = "";
+
+        Ds.Close();
+        Ds.Open("กำลังบันทึกข้อมูล", ds => @<ProgressBar></ProgressBar>);
+        await Task.Run(() => { Message = ShopService.AddShop(ShopData); });
+        ShowNotify("บันทึกข้อมูลสำเร็จ", Message);
+        LoadShop();
+    }
+
+    private async void UpdateShop(Shop ShopData)
+    {
+        string Message = "";
+
+        Ds.Close();
+        Ds.Open("กำลังบันทึกข้อมูล", ds => @<ProgressBar></ProgressBar>);
+        await Task.Run(() => { Message = ShopService.UpdateShop(ShopData); });
+        ShowNotify("บันทึกข้อมูลสำเร็จ", Message);
+        LoadShop();
+    }
+
+    private void DeleteShop(Shop ShopId)
+    {
+        ShopService.DeleteShop(ShopId);
+    }
+
+    private void LoadShop()
+    {
+        ListShop = ShopService.GetShop(CustomerId);
+        StateHasChanged();
+    }
+
+    private void ShowNotify(string Text, string Message)
+    {
+        Ds.Close();
+        if (Message == "Success")
+        {
+            Notify.Notify(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "",
+                        Detail = Text,
+                        Duration = 4000
+                    });
+        }
+        else
+        {
+            Ds.Open("พบข้อผิดพลาด", ds => @<RadzenText Text="@Message" Style="color: red;"></RadzenText>);
+        }
     }
 
     protected override void OnInitialized()
@@ -77,5 +149,6 @@ else
         (String.IsNullOrEmpty(Customer.District) == true ? "" : $" อ.{Customer.District}") +
         (String.IsNullOrEmpty(Customer.Province) == true ? "" : $" จ.{Customer.Province}") +
         (String.IsNullOrEmpty(Customer.Province) == true ? "" : $" {Customer.PostalCode}");
+        LoadShop();
     }
 }

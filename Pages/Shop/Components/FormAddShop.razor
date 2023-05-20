@@ -1,14 +1,17 @@
 ﻿@using SaveSyncNew.Models
+@using SaveSyncNew.Services
 
 @inject DialogService Ds
+@inject ShopService ShopSv
 
-<RadzenTemplateForm TItem="Shop">
+<RadzenTemplateForm TItem="Shop" Data="Shop" Submit="OnSave">
     <RadzenRow class="rz-mb-2">
         <RadzenColumn Size="4">
             <RadzenText Text="รหัสผลิตภัณท์"></RadzenText>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox></RadzenTextBox>
+            <RadzenTextBox @bind-Value="Shop.LicenseCode" Name="LicenseCode" MaxLength="4"></RadzenTextBox>
+            <RadzenLengthValidator Component="LicenseCode" Min="4" Text="ต้องใส่ให้ครบ 4 ตัวอักษร" Popup="true" Style="margin-bottom: 1rem; position: relative;" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-3">
@@ -16,7 +19,8 @@
             <RadzenText Text="รหัสร้านค้า"></RadzenText>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox></RadzenTextBox>
+            <RadzenTextBox @bind-Value="Shop.ShopCode" Name="ShopCode"></RadzenTextBox>
+            <RadzenRequiredValidator Component="ShopCode" Text="ต้องใส่ข้อมูล" Style="display:block;margin-top:0.3rem;"></RadzenRequiredValidator>
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-3">
@@ -24,23 +28,24 @@
             <RadzenText Text="ชื่อร้าน"></RadzenText>
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenTextBox></RadzenTextBox>
+            <RadzenTextBox @bind-Value="Shop.ShopName" Name="ShopName"></RadzenTextBox>
+            <RadzenRequiredValidator Component="ShopName" Text="ต้องใส่ข้อมูล" Style="display:block;margin-top:0.3rem;"></RadzenRequiredValidator>
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-3">
         <RadzenColumn Size="4">
             <RadzenText Text="วันที่เริ่มต้น"></RadzenText>
         </RadzenColumn>
-        <RadzenColumn>
-            <RadzenTextBox></RadzenTextBox>
+        <RadzenColumn Size="4">
+            <RadzenDatePicker @bind-Value="Shop.StartDate" DateFormat="dd/MM/yyyy"></RadzenDatePicker>
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-3">
         <RadzenColumn Size="4">
             <RadzenText Text="วันที่สิ้นสุด"></RadzenText>
         </RadzenColumn>
-        <RadzenColumn>
-            <RadzenTextBox></RadzenTextBox>
+        <RadzenColumn Size="4">
+            <RadzenDatePicker @bind-Value="Shop.EndDate" DateFormat="dd/MM/yyyy"></RadzenDatePicker>
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2">
@@ -48,12 +53,12 @@
             <RadzenText Text="วันที่ชำระ"></RadzenText>
         </RadzenColumn>
         <RadzenColumn Size="4">
-            <RadzenDatePicker @bind-Value="PayDate" DateFormat="dd/MM/yyyy"></RadzenDatePicker>
+            <RadzenDatePicker @bind-Value="Shop.PayDate" DateFormat="dd/MM/yyyy"></RadzenDatePicker>
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow class="rz-mb-2 rz-mt-6" JustifyContent="JustifyContent.Center">
         <RadzenColumn Size="2">
-            <RadzenButton Text="บันทึก" ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Click="ShowDate"></RadzenButton>
+            <RadzenButton Text="บันทึก" ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit"></RadzenButton>
         </RadzenColumn>
         <RadzenColumn Size="2">
             <RadzenButton Text="ยกเลิก" ButtonStyle="ButtonStyle.Secondary" Click="@(()=>Ds.Close())">
@@ -69,10 +74,38 @@
 </style>
 
 @code {
-    private DateTime PayDate = DateTime.Today;
+    [Parameter]
+    public EventCallback<Shop> Function { get; set; }
+    [Parameter]
+    public int ReciveCustomerId { get; set; }
+    [Parameter]
+    public int ReciveShopId { get; set; }
+    private Shop Shop = new()
+        {
+            StartDate = DateTime.Today,
+            EndDate = DateTime.Today,
+            PayDate = DateTime.Today,
+        };
 
-    private void ShowDate()
+    private void OnSave()
     {
-        Console.WriteLine(PayDate);
+        if (ReciveCustomerId == 0)
+        {
+            Function.InvokeAsync(Shop);
+        }
+        else
+        {
+            Shop.CustomerId = ReciveCustomerId;
+            Function.InvokeAsync(Shop);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (ReciveShopId == 0) return;
+        Shop? FindShop = ShopSv.GetShopFormId(ReciveShopId);
+        if (FindShop == null) return;
+        Shop = FindShop;
+
     }
 }
