@@ -40,19 +40,27 @@ namespace SaveSyncNew.Services
             }
         }
 
-        public void DeleteShop(Shop ShopData)
+        public string DeleteShop(Shop ShopData)
         {
-            ShopData.IsDeleted = true;
-            _dbContext.Update(ShopData);
-            _dbContext.SaveChanges();
+            try
+            {
+                ShopData.IsDeleted = true;
+                _dbContext.Update(ShopData);
+                _dbContext.SaveChanges();
+                return "Success";
+            }
+            catch (Exception Ex)
+            {
+                return Ex.Message;
+            }
+            
         }
 
         public List<Shop> GetShop(int CustomerId)
         {
             try
             {
-                List<Shop> FindShop = _dbContext.Shop.Where(x => x.CustomerId == CustomerId).ToList();
-                return FindShop;
+                return _dbContext.Shop.Where(x => x.CustomerId == CustomerId & x.IsDeleted != true).ToList();
             }
             catch (Exception ex)
             {

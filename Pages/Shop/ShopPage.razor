@@ -29,7 +29,7 @@ else
             <Template Context="data">
                 @if (data.ShopName == "NULL") return;
                 <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Click="@(()=>OpenFormEditShop(data.Id))"></RadzenButton>
-                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Class="rz-ms-1"></RadzenButton>
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Light" Class="rz-ms-1" Click="@(()=>OnDelete(data))"></RadzenButton>
             </Template>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn Width="50px" TItem="Shop" Title="#" TextAlign="TextAlign.Center">
@@ -137,6 +137,19 @@ else
         else
         {
             Ds.Open("พบข้อผิดพลาด", ds => @<RadzenText Text="@Message" Style="color: red;"></RadzenText>);
+        }
+    }
+
+    private async void OnDelete(Shop ShopData)
+    {
+        var a = await Ds.Confirm("ต้องการลบ?", "แจ้งเตือน", new ConfirmOptions() { OkButtonText = "ใช่", CancelButtonText = "ไม่" });
+        if (a != null && a.Value == true)
+        {
+            Ds.Open("กำลังลบข้อมูล", ds => @<ProgressBar></ProgressBar>);
+            string Message = "";
+            await Task.Run(() => { Message = ShopService.DeleteShop(ShopData); });
+            LoadShop();
+            ShowNotify("ลบข้อมูลสำเร็จ", Message);
         }
     }
 
