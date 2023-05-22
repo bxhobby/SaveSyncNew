@@ -5,11 +5,11 @@ namespace SaveSyncNew.Services
 {
     public class ThaiDataService
     {
-        private readonly string PathThaiData = Directory.GetCurrentDirectory() + @"\Data\thailand-geography-json-main\";
+        private readonly string PathThaiData = Directory.GetCurrentDirectory();
 
         private List<Province>? LoadProvinceData()
         {
-            StreamReader Reader = new(PathThaiData + @"provinces.json");
+            StreamReader Reader = new(PathThaiData + @"\Data\thailand-geography-json-main\provinces.json");
             string Json = Reader.ReadToEnd();
             List<Province>? ListProvince = JsonSerializer.Deserialize<List<Province>>(Json);
 
@@ -18,7 +18,7 @@ namespace SaveSyncNew.Services
 
         private List<District>? LoadDistrictData()
         {
-            StreamReader ReaderDistrict = new(PathThaiData + @"districts.json");
+            StreamReader ReaderDistrict = new(PathThaiData + @"\Data\thailand-geography-json-main\districts.json");
             string Json = ReaderDistrict.ReadToEnd();
             List<District>? ListDistrict = JsonSerializer.Deserialize<List<District>>(Json);
 
@@ -27,7 +27,7 @@ namespace SaveSyncNew.Services
 
         private List<SubDistrict>? LoadSubDistrictData()
         {
-            StreamReader ReaderDistrict = new(PathThaiData + @"subdistricts.json");
+            StreamReader ReaderDistrict = new(PathThaiData + @"\Data\thailand-geography-json-main\subdistricts.json");
             string Json = ReaderDistrict.ReadToEnd();
             List<SubDistrict>? ListSubDistrict = JsonSerializer.Deserialize<List<SubDistrict>>(Json);
 

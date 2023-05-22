@@ -7,7 +7,13 @@ namespace SaveSyncNew.Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-            //Database.EnsureCreated();
+            try
+            {
+                Database.EnsureCreated();
+            }
+            catch
+            {
+            }
         }
 
         public DbSet<Customer> Customer { get; set; }
